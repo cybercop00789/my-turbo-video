@@ -116,7 +116,7 @@ if uploaded_file is not None:
 
         st.write("**2. ตัดขอบออก (Pixels)**")
         c_top = st.number_input("ตัดขอบบน", 0, clip.h, 0)
-        c_bottom = st.number_input("ตัดขอบล่าง (ลบ Flow)", 0, clip.h, 46)
+        c_bottom = st.number_input("ตัดขอบล่าง (ลบ Flow)", 0, clip.h, 48)
         st.markdown('<p style="color:red; font-weight:bold; margin-bottom:0; font-size:14px;">⚠️ ค่ามาตรฐานตัดลายน้ำ (โปรแกรม flow)</p>', unsafe_allow_html=True)
         st.divider()
 
@@ -200,4 +200,5 @@ if uploaded_file is not None:
     clip.close()
     if os.path.exists(tfile.name):
         os.remove(tfile.name)
+
 
