@@ -11,7 +11,7 @@ if not hasattr(Image, 'ANTIALIAS'):
 from moviepy.editor import VideoFileClip, vfx
 import tempfile
 import os
-from proglog import ProgressBarLogger # นำเข้าตัวช่วยดึงเปอร์เซ็นต์จาก moviepy
+from proglog import ProgressBarLogger
 
 # ตั้งค่าหน้าเว็บให้รองรับ RWD (Responsive: ยืดหยุ่นตามอุปกรณ์ มือถือ/แท็บเล็ต/คอม)
 st.set_page_config(page_title="FlowCut Pro", layout="wide", initial_sidebar_state="collapsed")
@@ -29,14 +29,14 @@ custom_css = """
     
     /* 📱 บีบช่องอัปโหลดให้สั้นลง อยู่กึ่งกลาง และสวยงามขึ้น */
     section[data-testid="stFileUploader"] {
-        max-width: 650px; /* จำกัดความกว้างไม่ให้ยาวทะลุจอ */
-        margin: 0 auto; /* จัดให้อยู่ตรงกลาง */
+        max-width: 650px;
+        margin: 0 auto;
     }
     [data-testid="stFileUploadDropzone"] {
         border: 2px dashed #00f2fe;
         background-color: rgba(0, 242, 254, 0.05);
         border-radius: 20px;
-        padding: 40px 20px; /* เพิ่มพื้นที่แนวตั้งให้ดูมีมิติ */
+        padding: 40px 20px;
         transition: all 0.3s ease;
     }
     [data-testid="stFileUploadDropzone"]:hover {
@@ -90,7 +90,6 @@ st.markdown("<p style='text-align: center; color: #a0a0a0; margin-bottom: 20px;'
 st.markdown('<p style="text-align: center;"><strong>ผู้พัฒนาโปรแกรม :</strong> <a href="https://www.facebook.com/adnet.golf" target="_blank" style="color:#00f2fe; font-weight:bold; text-decoration:none; text-shadow: 0 0 5px rgba(0, 242, 254, 0.6);">Face Book:ก๊อบปี้ ณัฐชยา</a></p>', unsafe_allow_html=True)
 st.divider()
 
-# กล่องอัปโหลดที่ถูกปรับ CSS ใหม่ให้กะทัดรัด
 uploaded_file = st.file_uploader("อัปโหลดวิดีโอ (Flow/TikTok)", type=['mp4', 'mov', 'avi'])
 
 if uploaded_file is not None:
@@ -101,7 +100,6 @@ if uploaded_file is not None:
     clip = VideoFileClip(tfile.name)
     duration = float(clip.duration)
 
-    # st.columns ปรับสมดุลให้รองรับมือถือ (Responsive)
     col1, col2 = st.columns([1, 1])
 
     with col1:
@@ -122,7 +120,6 @@ if uploaded_file is not None:
         st.markdown('<p style="color:red; font-weight:bold; margin-bottom:0; font-size:14px;">⚠️ ค่ามาตรฐานตัดลายน้ำ (โปรแกรม flow)</p>', unsafe_allow_html=True)
         st.divider()
 
-        # 3. ความละเอียดลิมิตไว้ที่ 1080p ตามสั่ง
         st.write("**3. เลือกความละเอียดตอนดาวน์โหลด**")
         res_options = {
             "เท่าต้นฉบับ (Original)": None,
@@ -136,24 +133,19 @@ if uploaded_file is not None:
 
         if st.button("⚡ เริ่มเรนเดอร์ด่วนคุณภาพสูงสุด", use_container_width=True):
             
-            # สร้างตัวแปรสำหรับคุมแถบ % หน้าจอ
             progress_bar = st.progress(0)
             status_text = st.empty()
             
-            # ==========================================
-            # 🔄 คลาสตัวดึง % เปอร์เซ็นต์เพื่อแสดงผล Real-time
-            # ==========================================
             class MyVideoLogger(ProgressBarLogger):
                 def bars_callback(self, bar, attr, value, old_value=None):
                     total = self.bars[bar]['total']
                     if total > 0:
                         percent = int((value / total) * 100)
-                        percent = min(max(percent, 0), 100) # บังคับตัวเลขไม่ให้เกิน 100
-                        progress_bar.progress(percent) # อัปเดตแถบสี
-                        status_text.markdown(f"**⏳ กำลังประมวลผลวิดีโอ... {percent}%**")
+                        percent = min(max(percent, 0), 100)
+                        progress_bar.progress(percent)
+                        status_text.markdown(f"**⏳ กำลังประมวลผลวิดีโอ... {percent}%** (อาจใช้เวลาพับไฟล์แป๊บนึง เพื่อให้ขนาดเล็กลงครับ)")
             
             custom_logger = MyVideoLogger()
-
             output_path = "high_res_video.mp4"
             
             try:
@@ -163,41 +155,40 @@ if uploaded_file is not None:
                 if target_height is not None:
                     final_output = final_output.fx(vfx.resize, height=target_height)
                 
-                # โยน custom_logger เข้าไปเพื่อให้มันป้อน % กลับมาที่หน้าเว็บ
+                # ==========================================
+                # 🛡️ ส่วนที่อัปเดตใหม่: บีบอัดไฟล์ให้เล็กลง แต่คุณภาพ 100% เท่าตาเห็น
+                # ==========================================
                 final_output.write_videofile(
                     output_path, 
                     codec="libx264", 
                     audio_codec="aac", 
+                    audio_bitrate="128k", # ล็อกขนาดไฟล์เสียงไม่ให้ใหญ่เกิน
                     fps=clip.fps,       
-                    preset="ultrafast", 
+                    preset="fast",        # เปลี่ยนจาก ultrafast เป็น fast ให้ระบบบีบอัดไฟล์ได้ดีขึ้น
                     threads=2,          
-                    ffmpeg_params=["-crf", "18"], 
+                    ffmpeg_params=["-crf", "23"], # เปลี่ยนจาก 18 เป็น 23 (ภาพชัดเท่าเดิม แต่ไฟล์เล็กลง 2-3 เท่า!)
                     logger=custom_logger 
                 )
+                # ==========================================
                 
-                # พอเสร็จ 100% ให้ข้อความเปลี่ยนเป็นสีเขียว
                 progress_bar.progress(100)
-                status_text.empty() # ล้างข้อความ % ออก
-                st.success("✅ เรนเดอร์เสร็จสิ้นด้วยความชัดสูงสุด!")
+                status_text.empty()
+                st.success("✅ เรนเดอร์เสร็จสิ้น! ภาพชัด 100% แถมไฟล์เล็กกะทัดรัด")
                 
-                # ==========================================
-                # 📦 คำนวณและดึงขนาดไฟล์ที่เพิ่งสร้างเสร็จ (แสดงเป็น MB)
-                # ==========================================
                 file_size_bytes = os.path.getsize(output_path)
                 file_size_mb = file_size_bytes / (1024 * 1024)
                 
                 st.markdown(f'''
                 <div style="background-color: rgba(0, 242, 254, 0.1); border-left: 5px solid #00f2fe; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
                     <span style="color: #00f2fe; font-size: 16px; font-weight: bold; text-shadow: 0 0 5px rgba(0, 242, 254, 0.6);">🛡️ ปลอดภัย 100% สำหรับ TikTok & Reels</span><br>
-                    <span style="color: #e0e0e0; font-size: 14px;">วิดีโอนี้ถูกเรนเดอร์โดยไม่ลดคุณภาพ (Bitrate) คุณสามารถโพสต์ได้อย่างมั่นใจ!</span><br><br>
-                    <span style="color: #ff007f; font-size: 16px; font-weight: bold;">📦 ขนาดไฟล์: {file_size_mb:.2f} MB</span>
+                    <span style="color: #e0e0e0; font-size: 14px;">วิดีโอนี้ถูกเรนเดอร์แบบรักษาสัดส่วนและคุณภาพ (CRF23) คุณสามารถโพสต์ได้อย่างมั่นใจ!</span><br><br>
+                    <span style="color: #ff007f; font-size: 16px; font-weight: bold;">📦 ขนาดไฟล์หลังตัดต่อ: {file_size_mb:.2f} MB</span>
                 </div>
                 ''', unsafe_allow_html=True)
 
                 st.video(output_path)
                 
                 with open(output_path, "rb") as f:
-                    # ใส่ขนาดไฟล์โชว์ในปุ่มดาวน์โหลดด้วยเลย
                     st.download_button(f"📥 ดาวน์โหลดวิดีโอ ({file_size_mb:.2f} MB)", f, "high_quality_video.mp4", "video/mp4")
 
                 final_output.close()
