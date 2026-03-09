@@ -1,4 +1,13 @@
 import streamlit as st
+
+# ==========================================
+# 🚨 วิชามาร: แก้ปัญหา PIL.Image ลบคำสั่ง ANTIALIAS ทิ้ง (ต้องวางไว้บนสุด)
+# ==========================================
+import PIL
+if not hasattr(PIL.Image, 'ANTIALIAS'):
+    PIL.Image.ANTIALIAS = PIL.Image.LANCZOS
+# ==========================================
+
 from moviepy.editor import VideoFileClip, vfx
 import tempfile
 import os
@@ -198,7 +207,6 @@ if uploaded_file is not None:
                     
                 except Exception as e:
                     st.error(f"เกิดข้อผิดพลาด: {e}")
-                    st.info("💡 วิธีแก้ Error (ANTIALIAS): ต้องแก้ requirements.txt บน GitHub ห้ามแก้ใน Python!")
                     st.info("💡 วิธีแก้ Memory Error: ให้ลองปิดโปรแกรมอื่นในเครื่องก่อนกดเรนเดอร์ หรือลดความละเอียดตอนดาวน์โหลดลงมาครับ")
 
     clip.close()
