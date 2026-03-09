@@ -9,6 +9,11 @@ st.set_page_config(page_title="AI-Safe Video Editor (Original Quality)", layout=
 st.title("🎬 เครื่องมือตัดต่อวิดีโอ (โหมดคุณภาพสูง & เร็วสุดขีด)")
 st.write("ตัดขอบ ลบลายน้ำ โดยรักษาความคมชัดเท่าต้นฉบับ 100%")
 
+# --- ส่วนที่เพิ่มใหม่: เครดิตผู้เขียนโปรแกรม (ลิงก์ซ่อน URL) ---
+st.markdown('**พัฒนาโดย:** <a href="https://www.facebook.com/adnet.golf" target="_blank">ผู้เขียนโปรแกรม</a>', unsafe_allow_html=True)
+st.divider()
+# --------------------------------------------------------
+
 uploaded_file = st.file_uploader("อัปโหลดวิดีโอ", type=['mp4', 'mov', 'avi'])
 
 if uploaded_file is not None:
@@ -47,6 +52,22 @@ if uploaded_file is not None:
         
         st.divider()
 
+        # --- ส่วนที่เพิ่มใหม่: ตัวเลือกความละเอียด (Resolution) ---
+        st.write("**3. เลือกความละเอียดตอนดาวน์โหลด**")
+        res_options = {
+            "เท่าต้นฉบับ (Original)": None,
+            "720p (HD)": 720,
+            "1080p (Full HD)": 1080,
+            "1440p (2K/QHD)": 1440,
+            "2160p (4K/UHD)": 2160,
+            "4320p (8K)": 4320
+        }
+        selected_res_label = st.selectbox("ขนาดที่ต้องการ (ความชัด)", list(res_options.keys()))
+        target_height = res_options[selected_res_label]
+        
+        st.divider()
+        # ------------------------------------------------------
+
         if st.button("⚡ เรนเดอร์ความชัดสูงสุด (Original Quality)", use_container_width=True):
             with st.spinner('กำลังประมวลผล... โหมดเน้นความชัดและเร็วสุดยอด'):
                 output_path = "high_res_video.mp4"
@@ -57,6 +78,12 @@ if uploaded_file is not None:
                     
                     # ขั้นตอนที่ 2: ครอปพื้นที่ออก (คงความละเอียดเดิม ไม่มีการ Resize)
                     final_output = processed_clip.crop(y1=c_top, y2=processed_clip.h-c_bottom)
+                    
+                    # --- ส่วนที่เพิ่มใหม่: ประมวลผลปรับขนาดตามที่เลือก ---
+                    if target_height is not None:
+                        # ใช้ vfx.resize เพื่อปรับขนาดตามความสูงที่เลือก (สัดส่วนภาพไม่เพี้ยน)
+                        final_output = final_output.fx(vfx.resize, height=target_height)
+                    # -------------------------------------------------
                     
                     # ขั้นตอนที่ 3: บันทึกไฟล์ด้วยการตั้งค่าความคมชัดสูงสุด
                     # ใช้ ffmpeg_params crf 18 เพื่อรักษาคุณภาพให้เหมือนต้นฉบับที่สุด
