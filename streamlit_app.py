@@ -3,9 +3,9 @@ import streamlit as st
 # ==========================================
 # 🚨 วิชามาร: แก้ปัญหา PIL.Image ลบคำสั่ง ANTIALIAS ทิ้ง (ต้องวางไว้บนสุด)
 # ==========================================
-import PIL
-if not hasattr(PIL.Image, 'ANTIALIAS'):
-    PIL.Image.ANTIALIAS = PIL.Image.LANCZOS
+from PIL import Image
+if not hasattr(Image, 'ANTIALIAS'):
+    Image.ANTIALIAS = Image.LANCZOS
 # ==========================================
 
 from moviepy.editor import VideoFileClip, vfx
@@ -170,8 +170,6 @@ if uploaded_file is not None:
                         final_output = final_output.fx(vfx.resize, height=target_height)
                     
                     # ขั้นตอนที่ 3: บันทึกไฟล์ด้วยการตั้งค่าความคมชัดสูงสุด
-                    # ใช้ ffmpeg_params crf 18 เพื่อรักษาคุณภาพให้เหมือนต้นฉบับที่สุด
-                    # ปรับลด Bitrate เล็กน้อยเพื่อประหยัด RAM บน Cloud ฟรี ( threads=2 )
                     final_output.write_videofile(
                         output_path, 
                         codec="libx264", 
