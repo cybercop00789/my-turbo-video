@@ -90,10 +90,10 @@ st.markdown("<p style='text-align: center; color: #a0a0a0; margin-bottom: 20px;'
 st.markdown('<p style="text-align: center;"><strong>ผู้พัฒนาโปรแกรม :</strong> <a href="https://www.facebook.com/adnet.golf" target="_blank" style="color:#00f2fe; font-weight:bold; text-decoration:none; text-shadow: 0 0 5px rgba(0, 242, 254, 0.6);">Face Book:ก๊อบปี้ ณัฐชยา</a></p>', unsafe_allow_html=True)
 
 # ==========================================
-# 👁️ ส่วนที่ 2: ระบบนับสถิติผู้เข้าใช้งาน (Visitor Counter) - เปลี่ยนเป็นเซิร์ฟเวอร์ใหม่ที่เสถียรกว่า
+# 👁️ ส่วนที่ 2: ระบบนับสถิติผู้เข้าใช้งาน (Visitor Counter) - อัปเดต Real-time
 # ==========================================
-# ใช้บริการของ Komarev ซึ่งเสถียรและไม่ค่อยโดนบล็อก
-counter_url = "https://komarev.com/ghpvc/?username=flowcutpro-adnet-golf&label=VISITORS&color=ff007f&style=for-the-badge"
+# ใช้ VisitorBadge.io เสถียรที่สุดสำหรับเว็บไซต์ทั่วไป อัปเดตทันทีเมื่อมีการโหลดหน้าเว็บ
+counter_url = "https://api.visitorbadge.io/api/visitors?path=flowcutpro.adnet.golf&label=VISITORS&labelColor=%23121212&countColor=%23ff007f&style=for-the-badge"
 st.markdown(f'''
 <div style="text-align: center; margin-bottom: 10px;">
     <img src="{counter_url}" alt="สถิติผู้เข้าใช้งาน">
