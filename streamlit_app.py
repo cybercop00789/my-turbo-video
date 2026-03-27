@@ -88,6 +88,20 @@ st.markdown("<p style='text-align: center; color: #a0a0a0; margin-bottom: 20px;'
 
 # เครดิตจัดกึ่งกลางสวยงาม
 st.markdown('<p style="text-align: center;"><strong>ผู้พัฒนาโปรแกรม :</strong> <a href="https://www.facebook.com/adnet.golf" target="_blank" style="color:#00f2fe; font-weight:bold; text-decoration:none; text-shadow: 0 0 5px rgba(0, 242, 254, 0.6);">Face Book:ก๊อบปี้ ณัฐชยา</a></p>', unsafe_allow_html=True)
+
+# ==========================================
+# 👁️ ส่วนที่ 2: ระบบนับสถิติผู้เข้าใช้งาน (Visitor Counter) แบบไม่หายเมื่อเว็บ Refresh
+# ==========================================
+# ใช้ API ภายนอกในการนับ เพื่อแก้ปัญหาตัวแปรโดนล้างค่าเมื่อเว็บ Streamlit หลับ (Sleep)
+# ตั้งค่าสีให้เข้ากับธีม (สีชมพู #FF007F และสีพื้นหลัง #121212)
+counter_url = "https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=flowcutpro.adnet.golf&count_bg=%23FF007F&title_bg=%23121212&icon=&icon_color=%23E7E7E7&title=ผู้เข้าใช้งานทั้งหมด&edge_flat=false"
+st.markdown(f'''
+<div style="text-align: center; margin-bottom: 10px;">
+    <img src="{counter_url}" alt="สถิติผู้เข้าใช้งาน">
+</div>
+''', unsafe_allow_html=True)
+# ==========================================
+
 st.divider()
 
 uploaded_file = st.file_uploader("อัปโหลดวิดีโอ (Flow/TikTok)", type=['mp4', 'mov', 'avi'])
@@ -200,5 +214,3 @@ if uploaded_file is not None:
     clip.close()
     if os.path.exists(tfile.name):
         os.remove(tfile.name)
-
-
