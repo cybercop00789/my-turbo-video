@@ -9,9 +9,21 @@ if not hasattr(Image, 'ANTIALIAS'):
 # ==========================================
 
 from moviepy.editor import VideoFileClip, vfx
+from moviepy.config import change_settings
 import tempfile
 import os
 from proglog import ProgressBarLogger
+
+# ==========================================
+# 🛠️ แก้ปัญหา Path ของ ImageMagick (Windows vs Streamlit Cloud)
+# ==========================================
+if os.name != 'nt': 
+    # ทำงานบน Streamlit Cloud (Linux) ไม่ต้องระบุ Path Drive C:
+    change_settings({"IMAGEMAGICK_BINARY": "convert"})
+else:
+    # ทำงานบนคอมพิวเตอร์ของคุณเอง (Windows)
+    change_settings({"IMAGEMAGICK_BINARY": r"C:\Program Files\ImageMagick-7.1.1-Q16-HDRI\magick.exe"})
+# ==========================================
 
 # ตั้งค่าหน้าเว็บให้รองรับ RWD (Responsive: ยืดหยุ่นตามอุปกรณ์ มือถือ/แท็บเล็ต/คอม)
 st.set_page_config(page_title="FlowCut Pro", layout="wide", initial_sidebar_state="collapsed")
